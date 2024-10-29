@@ -2,3 +2,7 @@ networkx
 numpy
 pandas
 matplotlib
+opencv-python
+gymnasium
+renderlab
+pygame
