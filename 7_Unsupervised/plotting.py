@@ -142,7 +142,7 @@ def plot_2d_latents(ax, qz, z, y):
     scale_factor = 2
     batch_size = z.shape[0]
     palette = sns.color_palette()
-    colors = [palette[l] for l in y]
+    colors = np.array([palette[l] for l in y])
 
     # plot prior
     prior = plt.Circle((0, 0), scale_factor, color='gray', fill=True, alpha=0.1)
@@ -159,8 +159,14 @@ def plot_2d_latents(ax, qz, z, y):
     for p in posteriors:
         ax.add_artist(p)
 
-    ax.scatter(z[:, 0], z[:, 1], color=colors)
-
+    
+    for unique_class in y.unique():
+        class_idx = y == unique_class
+        ax.scatter(z[class_idx, 0], z[class_idx, 1], color=colors[class_idx], label=unique_class.item())
+    
+    
+    # ax.scatter(z[:, 0], z[:, 1], color=colors)
+    ax.legend()
     ax.set_xlim([-3, 3])
     ax.set_ylim([-3, 3])
     ax.set_aspect('equal', 'box')
@@ -169,9 +175,14 @@ def plot_2d_latents(ax, qz, z, y):
 def plot_latents(ax, z, y):
     z = z.to('cpu')
     palette = sns.color_palette()
-    colors = [palette[l] for l in y]
+    colors = np.array([palette[l] for l in y])
     z = TSNE(n_components=2).fit_transform(z)
-    ax.scatter(z[:, 0], z[:, 1], color=colors)
+    
+    for unique_class in y.unique():
+        class_idx = y == unique_class
+        ax.scatter(z[class_idx, 0], z[class_idx, 1], color=colors[class_idx], label=unique_class.item())
+    # ax.scatter(z[:, 0], z[:, 1], color=colors)
+    ax.legend()
 
 
 def make_vae_plots(vae, x, y, outputs, training_data, validation_data, tmp_img="tmp_vae_out.png", figsize=(18, 18)):
